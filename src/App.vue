@@ -1,12 +1,18 @@
 <script setup>
 import { reactive } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
 
-const state = reactive({ note:{title: "", value: ""}, notes: JSON.parse(localStorage.getItem("notes")) ?? []})
+import Button from './components/UI/Button.vue';
+import Note from './components/Note.vue'
 
-function addNote(event){
-  if(state.note.value.trim() !== ""){
-    event.preventDefault()
-    let note = {title: state.note.title.trim(), value: state.note.value.trim()}
+const state = reactive({ 
+  note: { title: "", value: "" }, 
+  notes: JSON.parse(localStorage.getItem("notes")) ?? [],
+});
+
+function addNote() {
+  if(state.note.value.trim() !== "") {
+    let note = {title: state.note.title.trim(), value: state.note.value.trim(), id: uuidv4()}
     state.notes.unshift(note)
     localStorage.setItem("notes", JSON.stringify(state.notes))
     state.note.value = ""
@@ -15,21 +21,28 @@ function addNote(event){
 
 }
 
+function deleteNote(id) {
+  state.notes = state.notes.filter((note) => note.id !== id);
+  localStorage.setItem("notes", JSON.stringify(state.notes));
+}
+
 </script>
 
 <template>
   <div class="newNoteForm">
     <input type="text" v-model="state.note.title" class="titleInput" placeholder="Title..."/>
     <textarea type="text" v-model="state.note.value" rows="5" cols="70" class="valueInput" placeholder="Note..."/>
-    <button @click="addNote" :disabled="state.note.value === ''">Save note</button>
+    <Button 
+      @click="addNote" 
+      :disabled="state.note.value === ''">
+        Save note
+    </Button>
   </div>
   <div class="notes">
-    <div v-for="note in state.notes" class="note">
-      <h3 class="title">{{ note.title }}</h3>
-      <span>
-      {{ note.value }}
-      </span>
-    </div>
+    <Note v-for="note in state.notes"
+      :note="note"
+      @delete="deleteNote">
+    </Note>
   </div>
 </template>
 
@@ -39,18 +52,6 @@ function addNote(event){
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 16px;
   margin-top: 32px;
-}
-
-.note {
-  padding: 16px;
-  border: 1px solid rgb(161, 192, 250);
-  border-radius: 4px;
-  background-color: rgb(241, 246, 253);
-  white-space: pre-wrap;
-}
-
-.title {
-  margin: 0 0 8px 0;
 }
 
 .newNoteForm {
@@ -80,21 +81,4 @@ input:focus, textarea:focus{
 textarea {
   resize: none;
 }
-
-button {
-  background-color: #3e6ae1;
-  color: whitesmoke;
-  padding: 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: inherit;
-  font-weight: 600;
-}
-
-button:disabled {
-  opacity: 0.8;
-  cursor: not-allowed;
-}
-
 </style>
