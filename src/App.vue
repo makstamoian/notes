@@ -4,15 +4,15 @@ import { reactive } from 'vue'
 const state = reactive({ note:{title: "", value: ""}, notes: JSON.parse(localStorage.getItem("notes")) ?? []})
 
 function addNote(event){
-  if(event.key === "Enter" && state.note.value.trim() !== ""){
+  if(state.note.value.trim() !== ""){
     event.preventDefault()
-    let note = {...state.note}
-    state.notes.push(note)
+    let note = {title: state.note.title.trim(), value: state.note.value.trim()}
+    state.notes.unshift(note)
     localStorage.setItem("notes", JSON.stringify(state.notes))
     state.note.value = ""
     state.note.title = ""
-
   }
+
 }
 
 </script>
@@ -20,13 +20,15 @@ function addNote(event){
 <template>
   <div class="newNoteForm">
     <input type="text" v-model="state.note.title" class="titleInput" placeholder="Title..."/>
-    <textarea type="text" v-model="state.note.value" v-on:keypress="addNote" rows="5" cols="70" class="valueInput" placeholder="Note..."/>
+    <textarea type="text" v-model="state.note.value" rows="5" cols="70" class="valueInput" placeholder="Note..."/>
+    <button @click="addNote" :disabled="state.note.value === ''">Save note</button>
   </div>
   <div class="notes">
     <div v-for="note in state.notes" class="note">
       <h3 class="title">{{ note.title }}</h3>
+      <span>
       {{ note.value }}
-
+      </span>
     </div>
   </div>
 </template>
@@ -44,6 +46,7 @@ function addNote(event){
   border: 1px solid rgb(161, 192, 250);
   border-radius: 4px;
   background-color: rgb(241, 246, 253);
+  white-space: pre-wrap;
 }
 
 .title {
@@ -56,6 +59,7 @@ function addNote(event){
   max-width: 600px;
   gap: 16px;
   margin: 0 auto;
+  align-items: flex-start;
 }
 
 input, textarea {
@@ -66,6 +70,7 @@ input, textarea {
   outline: none; 
   border: 1px solid transparent;
   font-family: inherit;
+  
 }
 
 input:focus, textarea:focus{
@@ -74,6 +79,22 @@ input:focus, textarea:focus{
 
 textarea {
   resize: none;
+}
+
+button {
+  background-color: #3e6ae1;
+  color: whitesmoke;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+}
+
+button:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
 }
 
 </style>
