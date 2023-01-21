@@ -19,8 +19,8 @@ function addNote(event){
 
 <template>
   <div class="newNoteForm">
-    <input type="text" v-model="state.note.title" class="titleInput"/>
-    <textarea type="text" v-model="state.note.value" v-on:keypress="addNote" rows="5" cols="70" class="valueInput"/>
+    <input type="text" v-model="state.note.title" class="titleInput" placeholder="Title..."/>
+    <textarea type="text" v-model="state.note.value" v-on:keypress="addNote" rows="5" cols="70" class="valueInput" placeholder="Note..."/>
   </div>
   <div class="notes">
     <div v-for="note in state.notes" class="note">
@@ -41,18 +41,13 @@ function addNote(event){
 
 .note {
   padding: 16px;
-  border: 1px solid cornflowerblue;
-  border-radius: 8px;
-  background-color: rgb(223, 234, 248);
-  box-shadow: 1px 1px 3px 1px rgb(135, 187, 255);
+  border: 1px solid rgb(161, 192, 250);
+  border-radius: 4px;
+  background-color: rgb(241, 246, 253);
 }
 
 .title {
   margin: 0 0 8px 0;
-}
-
-.titleInput {
-
 }
 
 .newNoteForm {
@@ -61,6 +56,24 @@ function addNote(event){
   max-width: 600px;
   gap: 16px;
   margin: 0 auto;
+}
+
+input, textarea {
+  background-color: #f4f4f4;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  outline: none; 
+  border: 1px solid transparent;
+  font-family: inherit;
+}
+
+input:focus, textarea:focus{
+  border-color: #d0d1d2;
+}
+
+textarea {
+  resize: none;
 }
 
 </style>
